@@ -59,8 +59,6 @@ Main::Main() : wxFrame(nullptr, wxID_ANY, "lol")
 	vbox->Add(hbox2);
 
 	SetSizerAndFit(vbox);
-
-
 }
 
 Main::~Main()
@@ -70,9 +68,7 @@ Main::~Main()
 
 void Main::StartButtonClicked(wxCommandEvent& event)
 {
-	//int result = system("ping -c1 -s1 www.google.com");
-	doit("wp.pl");
-
+	ping(m_txtTarget->GetValue().ToStdString());
 	//m_isStarted = true;
 	//m_btnStart->Enable(false);
 	//m_btnStop->Enable(true);
