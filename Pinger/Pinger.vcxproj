@@ -15,12 +15,14 @@
     <ClCompile Include="Stats.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Ping.cpp" />
+    <ClCompile Include="TaskBarIcon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
     <ClInclude Include="Stats.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="Ping.h" />
+    <ClInclude Include="TaskBarIcon.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

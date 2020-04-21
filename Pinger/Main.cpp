@@ -15,7 +15,8 @@
 #define FORMAT_PING(val) FormatVal(val, " ms")
 
 wxBEGIN_EVENT_TABLE(Main, wxFrame)
-	EVT_BUTTON(ID_BTN_START, StartStopButtonClicked)
+	EVT_BUTTON(ID_BTN_START, Main::StartStopButtonClicked)
+	EVT_CLOSE(Main::OnClose)
 wxEND_EVENT_TABLE()
 
 Main::Main() : wxFrame(nullptr, wxID_ANY, APP_NAME)
@@ -58,6 +59,8 @@ Main::Main() : wxFrame(nullptr, wxID_ANY, APP_NAME)
 
 	SetSizerAndFit(vbox);
 
+	m_taskBarIcon = new TaskBarIcon(this);
+
 	// Init other stuff
 	m_timer.Bind(wxEVT_TIMER, &Main::OnTimer, this);
 
@@ -69,6 +72,7 @@ Main::~Main()
 {
 	delete m_btnStartStop, m_txtTarget, m_txtTarget;
 	delete m_labPacketLoss, m_labPing, m_ploss;
+	delete m_taskBarIcon;
 }
 
 void Main::OnTimer(wxTimerEvent& event)
@@ -112,4 +116,9 @@ void Main::StartStopButtonClicked(wxCommandEvent& event)
 std::string Main::FormatVal(float avg, std::string suffix)
 {
 	return std::to_string((int)avg) + suffix;
+}
+
+void Main::OnClose(wxCloseEvent& event)
+{
+	Show(false);
 }
