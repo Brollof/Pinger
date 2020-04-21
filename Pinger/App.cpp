@@ -1,6 +1,5 @@
 #include "App.h"
 
-
 wxIMPLEMENT_APP(App);
 
 App::App()
@@ -10,7 +9,7 @@ App::App()
 
 App::~App()
 {
-
+	delete m_frame;
 }
 
 bool App::OnInit()

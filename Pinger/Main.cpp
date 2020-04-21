@@ -1,25 +1,24 @@
-#include "Main.h"
 #include <wx/display.h>
 #include <iostream>
-
+#include "Main.h"
 #include "Ping.h"
 
+#define APP_NAME "Pinger"
 #define APP_WIDTH 200
 #define APP_HEIGHT 100
-#define BORDER 4
-
-enum IDS
-{
-	ID_BTN_START = 500,
-	ID_BTN_STOP,
-};
+#define BORDER_WIDTH 4
+#define PING_PERIOD 1000 // ms
+#define DEFAULT_TARGET "wp.pl"
+#define STATS_SAMPLES_NUM 10
+#define ID_BTN_START 500
+#define FORMAT_PLOSS(val) FormatVal(val, " %")
+#define FORMAT_PING(val) FormatVal(val, " ms")
 
 wxBEGIN_EVENT_TABLE(Main, wxFrame)
-	EVT_BUTTON(ID_BTN_START, StartButtonClicked)
-	EVT_BUTTON(ID_BTN_STOP, StopButtonClicked)
+	EVT_BUTTON(ID_BTN_START, StartStopButtonClicked)
 wxEND_EVENT_TABLE()
 
-Main::Main() : wxFrame(nullptr, wxID_ANY, "lol")
+Main::Main() : wxFrame(nullptr, wxID_ANY, APP_NAME)
 {
 #ifdef _DEBUG
 	AllocConsole();
@@ -28,7 +27,6 @@ Main::Main() : wxFrame(nullptr, wxID_ANY, "lol")
 	freopen_s(&fDummy, "CONOUT$", "w", stderr);
 	freopen_s(&fDummy, "CONOUT$", "w", stdout);
 #endif
-	std::cout << "Init" << std::endl;
 
 	// Init window
 	wxDisplay display(wxDisplay::GetFromWindow(this));
@@ -41,44 +39,77 @@ Main::Main() : wxFrame(nullptr, wxID_ANY, "lol")
 	wxBoxSizer* hbox1 = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer* hbox2 = new wxBoxSizer(wxHORIZONTAL);
 
-	m_btnStart = new wxButton(this, ID_BTN_START, "Ping!");
-	m_btnStop = new wxButton(this, ID_BTN_STOP, "Stop");
-	m_btnStop->Enable(false);
-	m_txtTarget = new wxTextCtrl(this, wxID_ANY);
+	m_btnStartStop = new wxButton(this, ID_BTN_START, "Ping!");
+	m_txtTarget = new wxTextCtrl(this, wxID_ANY, DEFAULT_TARGET);
 
-	hbox1->Add(new wxStaticText(this, wxID_ANY, "Target:"), 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER);
-	hbox1->Add(m_txtTarget, 0, wxALL, BORDER);
-	hbox1->Add(m_btnStart, 0, wxALL, BORDER);
-	hbox1->Add(m_btnStop, 0, wxALL, BORDER);
+	hbox1->Add(new wxStaticText(this, wxID_ANY, "Target:"), 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
+	hbox1->Add(m_txtTarget, 0, wxALL, BORDER_WIDTH);
+	hbox1->Add(m_btnStartStop, 0, wxALL, BORDER_WIDTH);
 
-	m_labPacketLoss = new wxStaticText(this, wxID_ANY, "0");
-	hbox2->Add(new wxStaticText(this, wxID_ANY, "Packet loss:"), 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER);
-	hbox2->Add(m_labPacketLoss, 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER);
+	m_labPacketLoss = new wxStaticText(this, wxID_ANY, FORMAT_PLOSS(0));
+	m_labPing = new wxStaticText(this, wxID_ANY, FORMAT_PING(0));
+	hbox2->Add(new wxStaticText(this, wxID_ANY, "Packet loss:"), 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
+	hbox2->Add(m_labPacketLoss, 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
+	hbox2->Add(new wxStaticText(this, wxID_ANY, "Ping:"), 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
+	hbox2->Add(m_labPing, 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
 
 	vbox->Add(hbox1);
 	vbox->Add(hbox2);
 
 	SetSizerAndFit(vbox);
+
+	// Init other stuff
+	m_timer.Bind(wxEVT_TIMER, &Main::OnTimer, this);
+
+	m_ploss = new Stats(STATS_SAMPLES_NUM);
+	m_latency = new Stats(STATS_SAMPLES_NUM);
 }
 
 Main::~Main()
 {
-
+	delete m_btnStartStop, m_txtTarget, m_txtTarget;
+	delete m_labPacketLoss, m_labPing, m_ploss;
 }
 
-void Main::StartButtonClicked(wxCommandEvent& event)
+void Main::OnTimer(wxTimerEvent& event)
 {
-	ping(m_txtTarget->GetValue().ToStdString());
-	//m_isStarted = true;
-	//m_btnStart->Enable(false);
-	//m_btnStop->Enable(true);
+	PingResult_t result = ping(m_txtTarget->GetValue().ToStdString());
+
+	if (result.status)
+	{
+		m_latency->Update(result.latency);
+		m_ploss->Update(0);
+	}
+	else
+	{
+		m_ploss->Update(1);
+	}
+
+	int pl = m_ploss->GetAverage() * 100;
+	int ping = m_latency->GetAverage();
+	m_labPacketLoss->SetLabel(FORMAT_PLOSS(pl));
+	m_labPing->SetLabel(FORMAT_PING(ping));
+}
+
+void Main::StartStopButtonClicked(wxCommandEvent& event)
+{
+	if (m_timer.IsRunning())
+	{
+		m_timer.Stop();
+		m_btnStartStop->SetLabel("Ping!");
+		m_txtTarget->Enable(true);
+	}
+	else
+	{
+		m_timer.Start(PING_PERIOD);
+		m_btnStartStop->SetLabel("Stop");
+		m_txtTarget->Enable(false);
+	}
+
 	event.Skip();
 }
 
-void Main::StopButtonClicked(wxCommandEvent& event)
+std::string Main::FormatVal(float avg, std::string suffix)
 {
-	m_isStarted = false;
-	m_btnStart->Enable(true);
-	m_btnStop->Enable(false);
-	event.Skip();
+	return std::to_string((int)avg) + suffix;
 }

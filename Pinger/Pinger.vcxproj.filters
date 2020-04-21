@@ -24,6 +24,9 @@
     <ClCompile Include="Ping.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Stats.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -33,6 +36,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Ping.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Stats.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

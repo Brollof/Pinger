@@ -2,4 +2,10 @@
 
 #include <string>
 
-bool ping(std::string target);
+typedef struct
+{
+  bool status;
+  int latency;
+} PingResult_t;
+
+PingResult_t ping(std::string target);
