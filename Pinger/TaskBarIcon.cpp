@@ -1,54 +1,13 @@
 #include <wx/wx.h>
 #include <wx/taskbar.h>
 #include <wx/icon.h> 
-
-static const char* const sample_xpm[] = {
-  /* columns rows colors chars-per-pixel */
-  "32 32 6 1",
-  "  c black",
-  ". c navy",
-  "X c red",
-  "o c yellow",
-  "O c gray100",
-  "+ c None",
-  /* pixels */
-  "++++++++++++++++++++++++++++++++",
-  "++++++++++++++++++++++++++++++++",
-  "++++++++++++++++++++++++++++++++",
-  "++++++++++++++++++++++++++++++++",
-  "++++++++++++++++++++++++++++++++",
-  "++++++++              ++++++++++",
-  "++++++++ ............ ++++++++++",
-  "++++++++ ............ ++++++++++",
-  "++++++++ .OO......... ++++++++++",
-  "++++++++ .OO......... ++++++++++",
-  "++++++++ .OO......... ++++++++++",
-  "++++++++ .OO......              ",
-  "++++++++ .OO...... oooooooooooo ",
-  "         .OO...... oooooooooooo ",
-  " XXXXXXX .OO...... oOOooooooooo ",
-  " XXXXXXX .OO...... oOOooooooooo ",
-  " XOOXXXX ......... oOOooooooooo ",
-  " XOOXXXX ......... oOOooooooooo ",
-  " XOOXXXX           oOOooooooooo ",
-  " XOOXXXXXXXXX ++++ oOOooooooooo ",
-  " XOOXXXXXXXXX ++++ oOOooooooooo ",
-  " XOOXXXXXXXXX ++++ oOOooooooooo ",
-  " XOOXXXXXXXXX ++++ oooooooooooo ",
-  " XOOXXXXXXXXX ++++ oooooooooooo ",
-  " XXXXXXXXXXXX ++++              ",
-  " XXXXXXXXXXXX ++++++++++++++++++",
-  "              ++++++++++++++++++",
-  "++++++++++++++++++++++++++++++++",
-  "++++++++++++++++++++++++++++++++",
-  "++++++++++++++++++++++++++++++++",
-  "++++++++++++++++++++++++++++++++",
-  "++++++++++++++++++++++++++++++++"
-};
-
+#include <wx/dc.h>
+#include <wx/image.h>
+#include <string>
 #include "TaskBarIcon.h"
 
 #define TBI_ID_EXIT 10001
+#define ICON_SIZE 32
 
 BEGIN_EVENT_TABLE(TaskBarIcon, wxTaskBarIcon)
   EVT_MENU(TBI_ID_EXIT, TaskBarIcon::OnMenuExit)
@@ -58,7 +17,7 @@ END_EVENT_TABLE()
 TaskBarIcon::TaskBarIcon(wxFrame* window) : wxTaskBarIcon()
 {
   m_frame = window;
-  SetIcon(wxIcon(sample_xpm));
+  SetIconFromNumber(0);
 }
 
 void TaskBarIcon::OnLeftDoubleClick(wxTaskBarIconEvent& event)
@@ -67,6 +26,7 @@ void TaskBarIcon::OnLeftDoubleClick(wxTaskBarIconEvent& event)
   {
     m_frame->Show();
   }
+  event.Skip();
 }
 
 void TaskBarIcon::OnMenuExit(wxCommandEvent& event)
@@ -79,4 +39,26 @@ wxMenu* TaskBarIcon::CreatePopupMenu()
   wxMenu* menu = new wxMenu;
   menu->Append(TBI_ID_EXIT, "Exit");
   return menu;
+}
+
+void TaskBarIcon::SetIconFromNumber(int n)
+{
+  wxBitmap bm(ICON_SIZE, ICON_SIZE);
+  wxMemoryDC dc(bm);
+
+  dc.SetTextBackground(*wxBLACK);
+  dc.SetTextForeground(*wxWHITE);
+
+  wxFont font = dc.GetFont();
+  font.Scale(2.0);
+  font.SetWeight(wxFONTWEIGHT_BOLD);
+  dc.SetFont(font);
+
+  wxRect rect = wxRect(0, 0, ICON_SIZE, ICON_SIZE);
+  dc.DrawLabel(std::to_string(n), rect, wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL);
+  dc.SelectObject(wxNullBitmap);
+
+  wxIcon icon = wxIcon();
+  icon.CopyFromBitmap(bm);
+  SetIcon(icon);
 }

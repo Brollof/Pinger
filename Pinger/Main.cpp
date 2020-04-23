@@ -34,8 +34,10 @@ Main::Main() : wxFrame(nullptr, wxID_ANY, APP_NAME)
 	wxRect screen = display.GetClientArea();
 	this->SetInitialSize(wxSize(APP_WIDTH, APP_HEIGHT));
 	this->SetPosition(wxPoint(screen.width / 2 - APP_WIDTH / 2, screen.height / 2 - APP_HEIGHT / 2));
+	this->SetWindowStyle(this->GetWindowStyle() & ~wxMAXIMIZE_BOX); // Disable maximize button
 
 	// Init widgets
+	m_taskBarIcon = new TaskBarIcon(this);
 	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer* hbox1 = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer* hbox2 = new wxBoxSizer(wxHORIZONTAL);
@@ -58,8 +60,6 @@ Main::Main() : wxFrame(nullptr, wxID_ANY, APP_NAME)
 	vbox->Add(hbox2);
 
 	SetSizerAndFit(vbox);
-
-	m_taskBarIcon = new TaskBarIcon(this);
 
 	// Init other stuff
 	m_timer.Bind(wxEVT_TIMER, &Main::OnTimer, this);
@@ -93,6 +93,8 @@ void Main::OnTimer(wxTimerEvent& event)
 	int ping = m_latency->GetAverage();
 	m_labPacketLoss->SetLabel(FORMAT_PLOSS(pl));
 	m_labPing->SetLabel(FORMAT_PING(ping));
+	// constrain value to range <0;99> for optimal text size on icon
+	m_taskBarIcon->SetIconFromNumber(std::clamp(pl, 0, 99));
 }
 
 void Main::StartStopButtonClicked(wxCommandEvent& event)
