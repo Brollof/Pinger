@@ -8,7 +8,7 @@
 class Main : public wxFrame
 {
 public:
-  Main();
+  Main(std::string appName);
   ~Main();
 
 private:

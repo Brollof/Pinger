@@ -25,7 +25,7 @@ App::~App()
 bool App::OnInit()
 {
   wxImage::AddHandler(new wxJPEGHandler);
-  m_frame = new Main();
+  m_frame = new Main(GetAppTitle());
   m_frame->Show();
   return true;
 }

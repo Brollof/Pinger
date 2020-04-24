@@ -2,8 +2,8 @@
 #include <iostream>
 #include "Main.h"
 #include "Ping.h"
+#include "Version.h"
 
-#define APP_NAME "Pinger"
 #define APP_WIDTH 200
 #define APP_HEIGHT 100
 #define BORDER_WIDTH 4
@@ -19,7 +19,7 @@ wxBEGIN_EVENT_TABLE(Main, wxFrame)
   EVT_CLOSE(Main::OnClose)
 wxEND_EVENT_TABLE()
 
-Main::Main() : wxFrame(nullptr, wxID_ANY, APP_NAME)
+Main::Main(std::string appName) : wxFrame(nullptr, wxID_ANY, appName)
 {
   // Init window
   wxDisplay display(wxDisplay::GetFromWindow(this));
