@@ -6,11 +6,10 @@
 class App : public wxApp
 {
 public:
-	App();
-	~App();
-	virtual bool OnInit();
+  App();
+  ~App();
+  virtual bool OnInit();
 
 private:
-	Main *m_frame = nullptr;
+  Main* m_frame = nullptr;
 };
-

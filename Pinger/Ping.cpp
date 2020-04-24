@@ -12,7 +12,7 @@ typedef struct
   unsigned char Flags;                       // IP header flags
   unsigned char OptionsSize;                 // Size in bytes of options data
   unsigned char* OptionsData;                // Pointer to options data
-} IP_OPTION_INFORMATION, *PIP_OPTION_INFORMATION;
+} IP_OPTION_INFORMATION, * PIP_OPTION_INFORMATION;
 
 typedef struct
 {
@@ -23,7 +23,7 @@ typedef struct
   unsigned short Reserved;                   // Reserved for system use
   void* Data;                                // Pointer to the echo data
   IP_OPTION_INFORMATION Options;             // Reply options
-} IP_ECHO_REPLY, *PIP_ECHO_REPLY;
+} IP_ECHO_REPLY, * PIP_ECHO_REPLY;
 
 
 PingResult_t ping(std::string target)
@@ -58,10 +58,10 @@ PingResult_t ping(std::string target)
   }
 
   // Get handles to the functions inside ICMP.DLL that we'll need
-  typedef HANDLE(WINAPI * pfnHV)(VOID);
-  typedef BOOL(WINAPI * pfnBH)(HANDLE);
-  typedef DWORD(WINAPI * pfnDHDPWPipPDD)(HANDLE, DWORD, LPVOID, WORD,
-                                         PIP_OPTION_INFORMATION, LPVOID, DWORD, DWORD);
+  typedef HANDLE(WINAPI* pfnHV)(VOID);
+  typedef BOOL(WINAPI* pfnBH)(HANDLE);
+  typedef DWORD(WINAPI* pfnDHDPWPipPDD)(HANDLE, DWORD, LPVOID, WORD,
+    PIP_OPTION_INFORMATION, LPVOID, DWORD, DWORD);
   pfnHV pIcmpCreateFile;
   pfnBH pIcmpCloseHandle;
   pfnDHDPWPipPDD pIcmpSendEcho;
@@ -95,19 +95,19 @@ PingResult_t ping(std::string target)
   pIpe->DataSize = sizeof(acPingBuffer);
 
   // Send the ping packet
-  
+
   DWORD dwStatus = pIcmpSendEcho(hIP, *((DWORD*)phe->h_addr_list[0]),
-                                 acPingBuffer, sizeof(acPingBuffer), NULL, pIpe,
-                                 sizeof(IP_ECHO_REPLY) + sizeof(acPingBuffer), 1000);
+    acPingBuffer, sizeof(acPingBuffer), NULL, pIpe,
+    sizeof(IP_ECHO_REPLY) + sizeof(acPingBuffer), 1000);
   if (dwStatus != 0)
   {
     std::cout << "Addr: " <<
-              int(LOBYTE(LOWORD(pIpe->Address))) << "." <<
-              int(HIBYTE(LOWORD(pIpe->Address))) << "." <<
-              int(LOBYTE(HIWORD(pIpe->Address))) << "." <<
-              int(HIBYTE(HIWORD(pIpe->Address))) << ", " <<
-              "RTT: " << int(pIpe->RoundTripTime) << "ms, " <<
-              "TTL: " << int(pIpe->Options.Ttl) << std::endl;
+      int(LOBYTE(LOWORD(pIpe->Address))) << "." <<
+      int(HIBYTE(LOWORD(pIpe->Address))) << "." <<
+      int(LOBYTE(HIWORD(pIpe->Address))) << "." <<
+      int(HIBYTE(HIWORD(pIpe->Address))) << ", " <<
+      "RTT: " << int(pIpe->RoundTripTime) << "ms, " <<
+      "TTL: " << int(pIpe->Options.Ttl) << std::endl;
   }
   else
   {
