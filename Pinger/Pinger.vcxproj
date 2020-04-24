@@ -19,11 +19,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Stats.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="Ping.h" />
     <ClInclude Include="TaskBarIcon.h" />
     <ClInclude Include="Version.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Pinger.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
