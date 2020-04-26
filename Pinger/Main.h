@@ -30,6 +30,7 @@ private:
   void OnClose(wxCloseEvent& event);
   std::string FormatVal(float avg, std::string suffix);
   void InitStats(int samples);
+  bool ValidateInput(int val, int min, int max);
 
   wxDECLARE_EVENT_TABLE();
 };

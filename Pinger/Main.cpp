@@ -11,6 +11,10 @@
 #define ID_BTN_START 500
 #define FORMAT_PLOSS(val) FormatVal(val, " %")
 #define FORMAT_PING(val) FormatVal(val, " ms")
+#define PERIOD_MIN 1
+#define PERIOD_MAX 60000
+#define SAMPLES_MIN 1
+#define SAMPLES_MAX 1000
 
 wxBEGIN_EVENT_TABLE(Main, wxFrame)
   EVT_BUTTON(ID_BTN_START, Main::StartStopButtonClicked)
@@ -41,8 +45,8 @@ Main::Main(std::string appName) : wxFrame(nullptr, wxID_ANY, appName)
 
   m_btnStartStop = new wxButton(this, ID_BTN_START, "Ping!");
   m_txtTarget = new wxTextCtrl(this, wxID_ANY, DEFAULT_TARGET);
-  m_txtSamples = new wxTextCtrl(this, wxID_ANY, "10");
-  m_txtPeriod = new wxTextCtrl(this, wxID_ANY, "1000");
+  m_txtSamples = new wxTextCtrl(this, wxID_ANY, "10", wxDefaultPosition, wxDefaultSize, 0, wxTextValidator(wxFILTER_DIGITS));
+  m_txtPeriod = new wxTextCtrl(this, wxID_ANY, "1000", wxDefaultPosition, wxDefaultSize, 0, wxTextValidator(wxFILTER_DIGITS));
 
   boxLeft->Add(new wxStaticText(this, wxID_ANY, "Target:"), 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
   boxLeft->Add(m_txtTarget, 0, wxALL, BORDER_WIDTH);
@@ -97,8 +101,15 @@ void Main::OnTimer(wxTimerEvent& event)
   m_taskBarIcon->SetIconFromNumber(std::clamp(pl, 0, 99));
 }
 
+bool Main::ValidateInput(int val, int min, int max)
+{
+  return (min <= val && val <= max);
+}
+
 void Main::StartStopButtonClicked(wxCommandEvent& event)
 {
+  event.Skip();
+
   if (m_timer.IsRunning())
   {
     m_timer.Stop();
@@ -109,11 +120,23 @@ void Main::StartStopButtonClicked(wxCommandEvent& event)
   }
   else
   {
-    unsigned long period = 0, samples = 0;
-    m_txtPeriod->GetValue().ToULong(&period);
+    unsigned long samples = 0, period = 0;
     m_txtSamples->GetValue().ToULong(&samples);
+    m_txtPeriod->GetValue().ToULong(&period);
+
+    if (!ValidateInput(samples, SAMPLES_MIN, SAMPLES_MAX) || !ValidateInput(period, PERIOD_MIN, PERIOD_MAX))
+    {
+      wxString msg;
+      msg.Printf(wxT("Samples number must be in range [%d; %d]\n"
+        "Period must be in range [%d; %d]"),
+        SAMPLES_MIN, SAMPLES_MAX, PERIOD_MIN, PERIOD_MAX);
+      wxMessageBox(msg, "Invalid input", wxOK | wxICON_EXCLAMATION | wxCENTRE);
+      return;
+    }
+
     std::cout << "Starting timer with period: " << period << " ms" << std::endl;
     std::cout << "Samples for statistics: " << samples << std::endl;
+
     InitStats(samples);
     m_timer.Start(period);
     m_btnStartStop->SetLabel("Stop");
@@ -121,8 +144,6 @@ void Main::StartStopButtonClicked(wxCommandEvent& event)
     m_txtSamples->Enable(false);
     m_txtPeriod->Enable(false);
   }
-
-  event.Skip();
 }
 
 std::string Main::FormatVal(float avg, std::string suffix)
