@@ -29,6 +29,7 @@ private:
   void OnTimer(wxTimerEvent& event);
   void OnClose(wxCloseEvent& event);
   std::string FormatVal(float avg, std::string suffix);
+  void InitStats(int samples);
 
   wxDECLARE_EVENT_TABLE();
 };

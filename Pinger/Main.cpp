@@ -7,9 +7,7 @@
 #define APP_WIDTH 200
 #define APP_HEIGHT 100
 #define BORDER_WIDTH 4
-#define PING_PERIOD 1000 // ms
 #define DEFAULT_TARGET "wp.pl"
-#define STATS_SAMPLES_NUM 10
 #define ID_BTN_START 500
 #define FORMAT_PLOSS(val) FormatVal(val, " %")
 #define FORMAT_PING(val) FormatVal(val, " ms")
@@ -68,9 +66,6 @@ Main::Main(std::string appName) : wxFrame(nullptr, wxID_ANY, appName)
 
   // Init other stuff
   m_timer.Bind(wxEVT_TIMER, &Main::OnTimer, this);
-
-  m_ploss = new Stats(STATS_SAMPLES_NUM);
-  m_latency = new Stats(STATS_SAMPLES_NUM);
 }
 
 Main::~Main()
@@ -109,12 +104,22 @@ void Main::StartStopButtonClicked(wxCommandEvent& event)
     m_timer.Stop();
     m_btnStartStop->SetLabel("Ping!");
     m_txtTarget->Enable(true);
+    m_txtSamples->Enable(true);
+    m_txtPeriod->Enable(true);
   }
   else
   {
-    m_timer.Start(PING_PERIOD);
+    unsigned long period = 0, samples = 0;
+    m_txtPeriod->GetValue().ToULong(&period);
+    m_txtSamples->GetValue().ToULong(&samples);
+    std::cout << "Starting timer with period: " << period << " ms" << std::endl;
+    std::cout << "Samples for statistics: " << samples << std::endl;
+    InitStats(samples);
+    m_timer.Start(period);
     m_btnStartStop->SetLabel("Stop");
     m_txtTarget->Enable(false);
+    m_txtSamples->Enable(false);
+    m_txtPeriod->Enable(false);
   }
 
   event.Skip();
@@ -128,4 +133,18 @@ std::string Main::FormatVal(float avg, std::string suffix)
 void Main::OnClose(wxCloseEvent& event)
 {
   Show(false);
+}
+
+void Main::InitStats(int samples)
+{
+  if (m_ploss)
+  {
+    delete m_ploss;
+  }
+  if (m_latency)
+  {
+    delete m_latency;
+  }
+  m_ploss = new Stats(samples);
+  m_latency = new Stats(samples);
 }
