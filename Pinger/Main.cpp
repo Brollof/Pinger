@@ -30,28 +30,41 @@ Main::Main(std::string appName) : wxFrame(nullptr, wxID_ANY, appName)
 
   // Init widgets
   m_taskBarIcon = new TaskBarIcon(this);
-  wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
-  wxBoxSizer* hbox1 = new wxBoxSizer(wxHORIZONTAL);
-  wxBoxSizer* hbox2 = new wxBoxSizer(wxHORIZONTAL);
+  wxBoxSizer* boxMain = new wxBoxSizer(wxVERTICAL);
+  wxBoxSizer* boxTop = new wxBoxSizer(wxHORIZONTAL);
+  wxFlexGridSizer* boxLeft = new wxFlexGridSizer(2, 0, 0);
+  wxBoxSizer* boxRight = new wxBoxSizer(wxVERTICAL);
+  wxBoxSizer* boxBottom = new wxBoxSizer(wxHORIZONTAL);
+
+  boxMain->Add(boxTop);
+  boxMain->Add(boxBottom);
+  boxTop->Add(boxLeft);
+  boxTop->Add(boxRight);
 
   m_btnStartStop = new wxButton(this, ID_BTN_START, "Ping!");
   m_txtTarget = new wxTextCtrl(this, wxID_ANY, DEFAULT_TARGET);
+  m_txtSamples = new wxTextCtrl(this, wxID_ANY, "10");
+  m_txtPeriod = new wxTextCtrl(this, wxID_ANY, "1000");
 
-  hbox1->Add(new wxStaticText(this, wxID_ANY, "Target:"), 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
-  hbox1->Add(m_txtTarget, 0, wxALL, BORDER_WIDTH);
-  hbox1->Add(m_btnStartStop, 0, wxALL, BORDER_WIDTH);
+  boxLeft->Add(new wxStaticText(this, wxID_ANY, "Target:"), 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
+  boxLeft->Add(m_txtTarget, 0, wxALL, BORDER_WIDTH);
+
+  boxLeft->Add(new wxStaticText(this, wxID_ANY, "Samples:"), 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
+  boxLeft->Add(m_txtSamples, 0, wxALL, BORDER_WIDTH);
+
+  boxLeft->Add(new wxStaticText(this, wxID_ANY, "Period [ms]:"), 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
+  boxLeft->Add(m_txtPeriod, 0, wxALL, BORDER_WIDTH);
+
+  boxRight->Add(m_btnStartStop, 0, wxALL, BORDER_WIDTH);
 
   m_labPacketLoss = new wxStaticText(this, wxID_ANY, FORMAT_PLOSS(0));
   m_labPing = new wxStaticText(this, wxID_ANY, FORMAT_PING(0));
-  hbox2->Add(new wxStaticText(this, wxID_ANY, "Packet loss:"), 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
-  hbox2->Add(m_labPacketLoss, 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
-  hbox2->Add(new wxStaticText(this, wxID_ANY, "Ping:"), 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
-  hbox2->Add(m_labPing, 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
+  boxBottom->Add(new wxStaticText(this, wxID_ANY, "Packet loss:"), 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
+  boxBottom->Add(m_labPacketLoss, 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
+  boxBottom->Add(new wxStaticText(this, wxID_ANY, "Ping:"), 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
+  boxBottom->Add(m_labPing, 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
 
-  vbox->Add(hbox1);
-  vbox->Add(hbox2);
-
-  SetSizerAndFit(vbox);
+  SetSizerAndFit(boxMain);
 
   // Init other stuff
   m_timer.Bind(wxEVT_TIMER, &Main::OnTimer, this);

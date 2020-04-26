@@ -41,7 +41,7 @@ static inline void PrintBuildType()
   std::cout << "Build: " << (VER_VER_DEBUG ? "DEBUG" : "RELEASE") << std::endl;
 }
 
-static inline const std::string& GetAppTitle()
+static inline const std::string GetAppTitle()
 {
   return VER_PRODUCTNAME_STR " v" VER_FILE_VERSION_STR;
 }

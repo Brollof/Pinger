@@ -15,6 +15,8 @@ private:
   bool m_isStarted = false;
   wxButton* m_btnStartStop = nullptr;
   wxTextCtrl* m_txtTarget = nullptr;
+  wxTextCtrl* m_txtSamples = nullptr;
+  wxTextCtrl* m_txtPeriod = nullptr;
   wxStaticText* m_labPacketLoss = nullptr;
   wxStaticText* m_labPing = nullptr;
   TaskBarIcon* m_taskBarIcon = nullptr;
