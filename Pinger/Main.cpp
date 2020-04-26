@@ -28,7 +28,8 @@ Main::Main(std::string appName) : wxFrame(nullptr, wxID_ANY, appName)
   wxRect screen = display.GetClientArea();
   this->SetInitialSize(wxSize(APP_WIDTH, APP_HEIGHT));
   this->SetPosition(wxPoint(screen.width / 2 - APP_WIDTH / 2, screen.height / 2 - APP_HEIGHT / 2));
-  this->SetWindowStyle(this->GetWindowStyle() & ~wxMAXIMIZE_BOX); // Disable maximize button
+  // Disable maximize button & disable window resizing
+  this->SetWindowStyle(this->GetWindowStyle() & ~(wxMAXIMIZE_BOX | wxRESIZE_BORDER));
 
   // Init widgets
   m_taskBarIcon = new TaskBarIcon(this);
