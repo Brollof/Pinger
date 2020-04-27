@@ -30,6 +30,7 @@ Main::Main(std::string appName) : wxFrame(nullptr, wxID_ANY, appName)
   this->SetPosition(wxPoint(screen.width / 2 - APP_WIDTH / 2, screen.height / 2 - APP_HEIGHT / 2));
   // Disable maximize button & disable window resizing
   this->SetWindowStyle(this->GetWindowStyle() & ~(wxMAXIMIZE_BOX | wxRESIZE_BORDER));
+  this->SetIcon(wxICON(MAIN_ICON));
 
   // Init widgets
   m_taskBarIcon = new TaskBarIcon(this);
