@@ -14,6 +14,7 @@ public:
 private:
   bool m_isStarted = false;
   wxButton* m_btnStartStop = nullptr;
+  wxButton* m_btnAbout = nullptr;
   wxTextCtrl* m_txtTarget = nullptr;
   wxTextCtrl* m_txtSamples = nullptr;
   wxTextCtrl* m_txtPeriod = nullptr;
@@ -26,6 +27,7 @@ private:
   Stats* m_latency;
 
   void StartStopButtonClicked(wxCommandEvent& event);
+  void ExitButtonClicked(wxCommandEvent& event);
   void OnTimer(wxTimerEvent& event);
   void OnClose(wxCloseEvent& event);
   std::string FormatVal(float avg, std::string suffix);
