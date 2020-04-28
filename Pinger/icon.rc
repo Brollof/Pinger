@@ -1,8 +1,6 @@
 // Microsoft Visual C++ generated resource script.
 //
-#include "resource1.h"
-
-MAIN_ICON ICON main.ico
+#include "resIcon.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -15,10 +13,21 @@ MAIN_ICON ICON main.ico
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Angielski (Stany Zjednoczone) resources
+// Polish (Poland) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_PLK)
-LANGUAGE 21, 1
+LANGUAGE LANG_POLISH, SUBLANG_DEFAULT
+#pragma code_page(1250)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+MAIN_ICON               ICON                    "main.ico"
+
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -26,18 +35,18 @@ LANGUAGE 21, 1
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE  
+1 TEXTINCLUDE 
 BEGIN
-    "resource1.h\0"
+    "resIcon.h\0"
 END
 
-2 TEXTINCLUDE  
+2 TEXTINCLUDE 
 BEGIN
     "#include ""winres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE  
+3 TEXTINCLUDE 
 BEGIN
     "\r\n"
     "\0"
@@ -45,7 +54,7 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
-#endif    // Angielski (Stany Zjednoczone) resources
+#endif    // Polish (Poland) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -59,3 +68,4 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
+

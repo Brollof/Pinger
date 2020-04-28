@@ -19,8 +19,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="resource1.h" />
+    <ClInclude Include="resIcon.h" />
+    <ClInclude Include="resVersion.h" />
     <ClInclude Include="Stats.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="Ping.h" />
@@ -28,7 +28,7 @@
     <ClInclude Include="Version.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Pinger.rc" />
+    <ResourceCompile Include="version.rc" />
     <ResourceCompile Include="icon.rc" />
   </ItemGroup>
   <ItemGroup>

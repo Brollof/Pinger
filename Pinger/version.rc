@@ -1,7 +1,6 @@
 // Microsoft Visual C++ generated resource script.
 //
-#include "resource.h"
-#include "version.h"
+#include "resVersion.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -28,7 +27,7 @@ LANGUAGE LANG_POLISH, SUBLANG_DEFAULT
 
 1 TEXTINCLUDE 
 BEGIN
-    "resource.h\0"
+    "resVersion.h\0"
 END
 
 2 TEXTINCLUDE 
@@ -52,26 +51,30 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION          VER_FILE_VERSION
- PRODUCTVERSION       VER_PRODUCT_VERSION
- FILEFLAGSMASK        0x3fL
- FILEFLAGS            VER_FILEFLAGS
- FILEOS               VER_FILEOS
- FILETYPE             VER_FILETYPE
+ FILEVERSION 1,1,0,0
+ PRODUCTVERSION 1,1,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x1L
  FILESUBTYPE 0x0L
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
         BLOCK "041504b0"
         BEGIN
-            VALUE "CompanyName",          VER_COMPANY_NAME_STR "\0"
-            VALUE "FileDescription",      VER_FILE_DESCRIPTION_STR "\0"
-            VALUE "FileVersion",          VER_FILE_VERSION_STR "\0"
-            VALUE "InternalName",         VER_INTERNAL_NAME_STR "\0"
-            VALUE "LegalCopyright",       VER_COPYRIGHT_STR "\0"
-            VALUE "OriginalFilename",     VER_ORIGINAL_FILENAME_STR "\0"
-            VALUE "ProductName",          VER_PRODUCTNAME_STR "\0"
-            VALUE "ProductVersion",       VER_PRODUCT_VERSION_STR "\0"
+            VALUE "CompanyName", "N/A"
+            VALUE "FileDescription", "N/A"
+            VALUE "FileVersion", "1.1.0"
+            VALUE "InternalName", "Pinger.exe"
+            VALUE "LegalCopyright", "Copyright (C) 2020"
+            VALUE "OriginalFilename", "Pinger.exe"
+            VALUE "ProductName", "Pinger"
+            VALUE "ProductVersion", "1.1.0"
         END
     END
     BLOCK "VarFileInfo"
