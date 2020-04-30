@@ -14,7 +14,7 @@ public:
 private:
   bool m_isStarted = false;
   wxButton* m_btnStartStop = nullptr;
-  wxButton* m_btnAbout = nullptr;
+  wxButton* m_btnExit = nullptr;
   wxTextCtrl* m_txtTarget = nullptr;
   wxTextCtrl* m_txtSamples = nullptr;
   wxTextCtrl* m_txtPeriod = nullptr;

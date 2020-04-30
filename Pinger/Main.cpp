@@ -3,13 +3,12 @@
 #include "Main.h"
 #include "Ping.h"
 #include "Version.h"
+#include "Common.h"
 
 #define APP_WIDTH 200
 #define APP_HEIGHT 100
 #define BORDER_WIDTH 4
 #define DEFAULT_TARGET "wp.pl"
-#define ID_BTN_START 500
-#define ID_BTN_EXIT 501
 #define FORMAT_PLOSS(val) FormatVal(val, " %")
 #define FORMAT_PING(val) FormatVal(val, " ms")
 #define PERIOD_MIN 1
@@ -48,7 +47,7 @@ Main::Main(std::string appName) : wxFrame(nullptr, wxID_ANY, appName)
   boxTop->Add(boxRight);
 
   m_btnStartStop = new wxButton(this, ID_BTN_START, "Ping!");
-  m_btnAbout = new wxButton(this, ID_BTN_EXIT, "Exit");
+  m_btnExit = new wxButton(this, ID_BTN_EXIT, "Exit");
   m_txtTarget = new wxTextCtrl(this, wxID_ANY, DEFAULT_TARGET);
   m_txtSamples = new wxTextCtrl(this, wxID_ANY, "10", wxDefaultPosition, wxDefaultSize, 0, wxTextValidator(wxFILTER_DIGITS));
   m_txtPeriod = new wxTextCtrl(this, wxID_ANY, "1000", wxDefaultPosition, wxDefaultSize, 0, wxTextValidator(wxFILTER_DIGITS));
@@ -63,7 +62,7 @@ Main::Main(std::string appName) : wxFrame(nullptr, wxID_ANY, appName)
   boxLeft->Add(m_txtPeriod, 0, wxALL, BORDER_WIDTH);
 
   boxRight->Add(m_btnStartStop, 0, wxALL, BORDER_WIDTH);
-  boxRight->Add(m_btnAbout, 0, wxALL, BORDER_WIDTH);
+  boxRight->Add(m_btnExit, 0, wxALL, BORDER_WIDTH);
 
   m_labPacketLoss = new wxStaticText(this, wxID_ANY, FORMAT_PLOSS(0));
   m_labPing = new wxStaticText(this, wxID_ANY, FORMAT_PING(0));
@@ -82,7 +81,7 @@ Main::~Main()
 {
   delete m_btnStartStop, m_txtTarget, m_txtTarget;
   delete m_labPacketLoss, m_labPing, m_ploss;
-  delete m_taskBarIcon;
+  delete m_taskBarIcon, m_btnExit;
 }
 
 void Main::OnTimer(wxTimerEvent& event)

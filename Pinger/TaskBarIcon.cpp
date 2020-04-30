@@ -5,12 +5,12 @@
 #include <wx/image.h>
 #include <string>
 #include "TaskBarIcon.h"
+#include "Common.h"
 
-#define TBI_ID_EXIT 10001
 #define ICON_SIZE 32
 
 BEGIN_EVENT_TABLE(TaskBarIcon, wxTaskBarIcon)
-  EVT_MENU(TBI_ID_EXIT, TaskBarIcon::OnMenuExit)
+  EVT_MENU(ID_TRAY_BTN_EXIT, TaskBarIcon::OnMenuExit)
   EVT_TASKBAR_LEFT_DCLICK(TaskBarIcon::OnLeftDoubleClick)
 END_EVENT_TABLE()
 
@@ -37,7 +37,7 @@ void TaskBarIcon::OnMenuExit(wxCommandEvent& event)
 wxMenu* TaskBarIcon::CreatePopupMenu()
 {
   wxMenu* menu = new wxMenu;
-  menu->Append(TBI_ID_EXIT, "Exit");
+  menu->Append(ID_TRAY_BTN_EXIT, "Exit");
   return menu;
 }
 
