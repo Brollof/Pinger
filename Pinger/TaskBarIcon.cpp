@@ -7,7 +7,9 @@
 #include "TaskBarIcon.h"
 #include "Common.h"
 
-#define ICON_SIZE 32
+#define ICON_SIZE         32
+#define ACTIVE_COLOR      wxColour("GREEN")
+#define INACTIVE_COLOR    wxColour("GREY")
 
 BEGIN_EVENT_TABLE(TaskBarIcon, wxTaskBarIcon)
   EVT_MENU(ID_TRAY_BTN_EXIT, TaskBarIcon::OnMenuExit)
@@ -43,11 +45,11 @@ wxMenu* TaskBarIcon::CreatePopupMenu()
 
 void TaskBarIcon::SetIconFromNumber(int n)
 {
+  m_num = n;
   wxBitmap bm(ICON_SIZE, ICON_SIZE);
   wxMemoryDC dc(bm);
 
-  dc.SetTextBackground(*wxBLACK);
-  dc.SetTextForeground(*wxWHITE);
+  dc.SetTextForeground(m_isActive ? ACTIVE_COLOR : INACTIVE_COLOR);
 
   wxFont font = dc.GetFont();
   font.Scale(2.0);
@@ -61,4 +63,10 @@ void TaskBarIcon::SetIconFromNumber(int n)
   wxIcon icon = wxIcon();
   icon.CopyFromBitmap(bm);
   SetIcon(icon);
+}
+
+void TaskBarIcon::SetActive(bool isActive)
+{
+  m_isActive = isActive;
+  SetIconFromNumber(m_num);
 }

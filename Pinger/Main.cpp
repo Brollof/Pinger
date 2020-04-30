@@ -119,6 +119,7 @@ void Main::StartStopButtonClicked(wxCommandEvent& event)
   {
     m_timer.Stop();
     m_btnStartStop->SetLabel("Ping!");
+    m_taskBarIcon->SetActive(false);
     m_txtTarget->Enable(true);
     m_txtSamples->Enable(true);
     m_txtPeriod->Enable(true);
@@ -145,6 +146,7 @@ void Main::StartStopButtonClicked(wxCommandEvent& event)
     InitStats(samples);
     m_timer.Start(period);
     m_btnStartStop->SetLabel("Stop");
+    m_taskBarIcon->SetActive(true);
     m_txtTarget->Enable(false);
     m_txtSamples->Enable(false);
     m_txtPeriod->Enable(false);
