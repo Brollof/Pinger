@@ -19,5 +19,6 @@ public:
 private:
   int m_samples;
   int m_idx;
+  bool m_isFull;
   stat_t* m_data;
 };

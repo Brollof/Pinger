@@ -10,6 +10,7 @@ Stats::Stats(int samples)
   m_samples = samples;
   m_data = new stat_t(m_samples, 0);
   m_idx = 0;
+  m_isFull = false;
 }
 
 Stats::~Stats()
@@ -19,6 +20,10 @@ Stats::~Stats()
 
 void Stats::Update(float value)
 {
+  if (m_idx == m_samples - 1)
+  {
+    m_isFull = true;
+  }
   m_data->at(m_idx) = value;
   m_idx = (m_idx + 1) % m_samples;
 }
@@ -26,11 +31,14 @@ void Stats::Update(float value)
 float Stats::GetAverage()
 {
   float sum = 0;
-  for (auto& val : *m_data)
+  int size = m_isFull ? m_data->size() : m_idx;
+
+  for (int i = 0; i < size; i++)
   {
-    sum += val;
+    sum += m_data->at(i);
   }
-  return sum / m_samples;
+
+  return sum / size;
 }
 
 #ifdef _DEBUG
