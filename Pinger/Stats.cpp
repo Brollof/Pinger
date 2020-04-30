@@ -9,8 +9,6 @@ Stats::Stats(int samples)
 {
   m_samples = samples;
   m_data = new stat_t(m_samples, 0);
-  m_idx = 0;
-  m_isFull = false;
 }
 
 Stats::~Stats()

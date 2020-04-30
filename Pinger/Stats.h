@@ -17,8 +17,8 @@ public:
 #endif
 
 private:
-  int m_samples;
-  int m_idx;
-  bool m_isFull;
-  stat_t* m_data;
+  int m_samples = 0;
+  int m_idx = 0;
+  bool m_isFull = false;
+  stat_t* m_data = nullptr;
 };
