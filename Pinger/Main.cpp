@@ -17,8 +17,9 @@
 #define SAMPLES_MAX 1000
 
 wxBEGIN_EVENT_TABLE(Main, wxFrame)
-  EVT_BUTTON(ID_BTN_START, Main::StartStopButtonClicked)
-  EVT_BUTTON(ID_BTN_EXIT, Main::ExitButtonClicked)
+  EVT_BUTTON(ID_BTN_START, Main::OnButtonRun)
+  EVT_BUTTON(ID_BTN_EXIT, Main::OnButtonExit)
+  EVT_CHECKBOX(ID_CB_FILE, Main::OnCheckbox)
   EVT_CLOSE(Main::OnClose)
 wxEND_EVENT_TABLE()
 
@@ -39,10 +40,12 @@ Main::Main(std::string appName) : wxFrame(nullptr, wxID_ANY, appName)
   wxBoxSizer* boxTop = new wxBoxSizer(wxHORIZONTAL);
   wxFlexGridSizer* boxLeft = new wxFlexGridSizer(2, 0, 0);
   wxBoxSizer* boxRight = new wxBoxSizer(wxVERTICAL);
-  wxBoxSizer* boxBottom = new wxBoxSizer(wxHORIZONTAL);
+  wxBoxSizer* boxBottom1 = new wxBoxSizer(wxHORIZONTAL);
+  wxBoxSizer* boxBottom2 = new wxBoxSizer(wxHORIZONTAL);
 
   boxMain->Add(boxTop);
-  boxMain->Add(boxBottom);
+  boxMain->Add(boxBottom1);
+  boxMain->Add(boxBottom2);
   boxTop->Add(boxLeft);
   boxTop->Add(boxRight);
 
@@ -64,12 +67,15 @@ Main::Main(std::string appName) : wxFrame(nullptr, wxID_ANY, appName)
   boxRight->Add(m_btnStartStop, 0, wxALL, BORDER_WIDTH);
   boxRight->Add(m_btnExit, 0, wxALL, BORDER_WIDTH);
 
+  m_checkBox = new wxCheckBox(this, ID_CB_FILE, "Save ping data to file");
+  boxBottom1->Add(m_checkBox, 0, wxALL, BORDER_WIDTH);
+
   m_labPacketLoss = new wxStaticText(this, wxID_ANY, FORMAT_PLOSS(0));
   m_labPing = new wxStaticText(this, wxID_ANY, FORMAT_PING(0));
-  boxBottom->Add(new wxStaticText(this, wxID_ANY, "Packet loss:"), 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
-  boxBottom->Add(m_labPacketLoss, 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
-  boxBottom->Add(new wxStaticText(this, wxID_ANY, "Ping:"), 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
-  boxBottom->Add(m_labPing, 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
+  boxBottom2->Add(new wxStaticText(this, wxID_ANY, "Packet loss:"), 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
+  boxBottom2->Add(m_labPacketLoss, 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
+  boxBottom2->Add(new wxStaticText(this, wxID_ANY, "Ping:"), 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
+  boxBottom2->Add(m_labPing, 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
 
   SetSizerAndFit(boxMain);
 
@@ -79,14 +85,20 @@ Main::Main(std::string appName) : wxFrame(nullptr, wxID_ANY, appName)
 
 Main::~Main()
 {
-  delete m_btnStartStop, m_txtTarget, m_txtTarget;
-  delete m_labPacketLoss, m_labPing, m_ploss;
-  delete m_taskBarIcon, m_btnExit;
+  if (m_logFile)
+  {
+    m_logFile->Close();
+  }
+  delete m_taskBarIcon;
 }
 
 void Main::OnTimer(wxTimerEvent& event)
 {
   PingResult_t result = ping(m_txtTarget->GetValue().ToStdString());
+  if (m_checkBox->GetValue() && m_logFile)
+  {
+    m_logFile->Write(result.data);
+  }
 
   if (result.status)
   {
@@ -111,7 +123,7 @@ bool Main::ValidateInput(int val, int min, int max)
   return (min <= val && val <= max);
 }
 
-void Main::StartStopButtonClicked(wxCommandEvent& event)
+void Main::OnButtonRun(wxCommandEvent& event)
 {
   static const char* msgTemplate = "Samples number must be in range [%d; %d]\n"
     "Period must be in range [%d; %d]";
@@ -179,7 +191,32 @@ void Main::InitStats(int samples)
   m_latency = new Stats(samples);
 }
 
-void Main::ExitButtonClicked(wxCommandEvent& event)
+void Main::OnButtonExit(wxCommandEvent& event)
 {
   Destroy();
+}
+
+void Main::OnCheckbox(wxCommandEvent& event)
+{
+  if (m_logFile)
+  {
+    return;
+  }
+
+  wxFileDialog dlg(this, _("Choose file to save ping data"), wxGetCwd(), "pinger.log", "Log files (*.log)|*.log", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+
+  if (dlg.ShowModal() == wxID_CANCEL)
+  {
+    m_checkBox->SetValue(!m_checkBox->GetValue());
+    return;
+  }
+
+  m_logFile = new wxFile(dlg.GetPath(), wxFile::write_append);
+  if (!m_logFile->IsOpened())
+  {
+    delete m_logFile;
+    m_logFile = nullptr;
+    wxLogError("Cannot access file '%s'.", dlg.GetPath());
+    m_checkBox->SetValue(!m_checkBox->GetValue());
+  }
 }

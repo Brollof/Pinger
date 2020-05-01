@@ -76,5 +76,5 @@ void TaskBarIcon::SetActive(bool isActive)
 
 void TaskBarIcon::OnMenuRun(wxCommandEvent& event)
 {
-  m_frame->StartStopButtonClicked(event);
+  m_frame->OnButtonRun(event);
 }

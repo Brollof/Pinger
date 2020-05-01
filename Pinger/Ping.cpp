@@ -1,9 +1,7 @@
 #include <winsock.h>
 #include <iostream>
+#include <sstream>
 #include "Ping.h"
-
-#define RET_SUCCESS(lat) {true, lat}
-#define RET_FAILURE() {false, 0}
 
 typedef struct
 {
@@ -31,9 +29,12 @@ PingResult_t ping(std::string target)
   WSADATA wsaData;
   WORD version;
   version = MAKEWORD(2, 2);
+  PingResult_t result = { false, 0, "" };
+
   if (WSAStartup(version, &wsaData) != 0)
   {
     std::cout << "WSAStartup failed!" << std::endl;
+    return result;
   }
   const char* dll = "icmp.dll";
   size_t size = strlen(dll) + 1;
@@ -46,7 +47,7 @@ PingResult_t ping(std::string target)
   if (hIcmp == 0)
   {
     std::cout << "Unable to locate ICMP.DLL!" << std::endl;
-    return RET_FAILURE();
+    return result;
   }
 
   // Look up an IP address for the given host name
@@ -54,7 +55,7 @@ PingResult_t ping(std::string target)
   if (!phe)
   {
     std::cout << "Could not find IP address for: " << target << std::endl;
-    return RET_FAILURE();
+    return result;
   }
 
   // Get handles to the functions inside ICMP.DLL that we'll need
@@ -71,7 +72,7 @@ PingResult_t ping(std::string target)
   if ((pIcmpCreateFile == 0) || (pIcmpCloseHandle == 0) || (pIcmpSendEcho == 0))
   {
     std::cout << "Failed to get proc addr for function." << std::endl;
-    return RET_FAILURE();
+    return result;
   }
 
   // Open the ping service
@@ -79,7 +80,7 @@ PingResult_t ping(std::string target)
   if (hIP == INVALID_HANDLE_VALUE)
   {
     std::cout << "Unable to open ping service." << std::endl;
-    return RET_FAILURE();
+    return result;
   }
 
   // Build ping packet
@@ -89,7 +90,7 @@ PingResult_t ping(std::string target)
   if (pIpe == 0)
   {
     std::cout << "Failed to allocate global ping packet buffer." << std::endl;
-    return RET_FAILURE();
+    return result;
   }
   pIpe->Data = acPingBuffer;
   pIpe->DataSize = sizeof(acPingBuffer);
@@ -99,25 +100,33 @@ PingResult_t ping(std::string target)
   DWORD dwStatus = pIcmpSendEcho(hIP, *((DWORD*)phe->h_addr_list[0]),
     acPingBuffer, sizeof(acPingBuffer), NULL, pIpe,
     sizeof(IP_ECHO_REPLY) + sizeof(acPingBuffer), 1000);
+
+  std::stringstream ss;
   if (dwStatus != 0)
   {
-    std::cout << "Addr: " <<
+    ss << "Addr: " <<
       int(LOBYTE(LOWORD(pIpe->Address))) << "." <<
       int(HIBYTE(LOWORD(pIpe->Address))) << "." <<
       int(LOBYTE(HIWORD(pIpe->Address))) << "." <<
       int(HIBYTE(HIWORD(pIpe->Address))) << ", " <<
       "RTT: " << int(pIpe->RoundTripTime) << "ms, " <<
       "TTL: " << int(pIpe->Options.Ttl) << std::endl;
+    std::cout << ss.rdbuf();
   }
   else
   {
-    std::cout << "Error obtaining info from ping packet." << std::endl;
-    return RET_FAILURE();
+    ss << "Timeout." << std::endl;
+    std::cout << ss.rdbuf();
+    return result;
   }
+  result.data = ss.str();
+  result.latency = int(pIpe->RoundTripTime);
+  result.status = true;
 
   // Shut down...
   GlobalFree(pIpe);
   FreeLibrary(hIcmp);
   WSACleanup();
-  return RET_SUCCESS(int(pIpe->RoundTripTime));
+
+  return result;
 }
