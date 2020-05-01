@@ -10,9 +10,9 @@ class Main : public wxFrame
 public:
   Main(std::string appName);
   ~Main();
+  void StartStopButtonClicked(wxCommandEvent& event);
 
 private:
-  bool m_isStarted = false;
   wxButton* m_btnStartStop = nullptr;
   wxButton* m_btnExit = nullptr;
   wxTextCtrl* m_txtTarget = nullptr;
@@ -26,7 +26,6 @@ private:
   Stats* m_ploss;
   Stats* m_latency;
 
-  void StartStopButtonClicked(wxCommandEvent& event);
   void ExitButtonClicked(wxCommandEvent& event);
   void OnTimer(wxTimerEvent& event);
   void OnClose(wxCloseEvent& event);

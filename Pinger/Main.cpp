@@ -46,7 +46,7 @@ Main::Main(std::string appName) : wxFrame(nullptr, wxID_ANY, appName)
   boxTop->Add(boxLeft);
   boxTop->Add(boxRight);
 
-  m_btnStartStop = new wxButton(this, ID_BTN_START, "Ping!");
+  m_btnStartStop = new wxButton(this, ID_BTN_START, APP_RUN_BTN_TEXT);
   m_btnExit = new wxButton(this, ID_BTN_EXIT, "Exit");
   m_txtTarget = new wxTextCtrl(this, wxID_ANY, DEFAULT_TARGET);
   m_txtSamples = new wxTextCtrl(this, wxID_ANY, "10", wxDefaultPosition, wxDefaultSize, 0, wxTextValidator(wxFILTER_DIGITS));

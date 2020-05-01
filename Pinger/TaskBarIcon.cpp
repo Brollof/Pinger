@@ -4,6 +4,7 @@
 #include <wx/dc.h>
 #include <wx/image.h>
 #include <string>
+#include "Main.h"
 #include "TaskBarIcon.h"
 #include "Common.h"
 
@@ -13,10 +14,11 @@
 
 BEGIN_EVENT_TABLE(TaskBarIcon, wxTaskBarIcon)
   EVT_MENU(ID_TRAY_BTN_EXIT, TaskBarIcon::OnMenuExit)
+  EVT_MENU(ID_TRAY_BTN_RUN, TaskBarIcon::OnMenuRun)
   EVT_TASKBAR_LEFT_DCLICK(TaskBarIcon::OnLeftDoubleClick)
 END_EVENT_TABLE()
 
-TaskBarIcon::TaskBarIcon(wxFrame* window) : wxTaskBarIcon()
+TaskBarIcon::TaskBarIcon(Main* window) : wxTaskBarIcon()
 {
   m_frame = window;
   SetIconFromNumber(0);
@@ -39,6 +41,7 @@ void TaskBarIcon::OnMenuExit(wxCommandEvent& event)
 wxMenu* TaskBarIcon::CreatePopupMenu()
 {
   wxMenu* menu = new wxMenu;
+  menu->Append(ID_TRAY_BTN_RUN, m_isActive ? APP_STOP_BTN_TEXT: APP_RUN_BTN_TEXT);
   menu->Append(ID_TRAY_BTN_EXIT, "Exit");
   return menu;
 }
@@ -69,4 +72,9 @@ void TaskBarIcon::SetActive(bool isActive)
 {
   m_isActive = isActive;
   SetIconFromNumber(m_num);
+}
+
+void TaskBarIcon::OnMenuRun(wxCommandEvent& event)
+{
+  m_frame->StartStopButtonClicked(event);
 }
