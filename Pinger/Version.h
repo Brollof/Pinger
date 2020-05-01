@@ -7,7 +7,7 @@
 #define VERSION_MINOR               2
 #define VERSION_REVISION            0
 
-#define VER_FILE_DESCRIPTION_STR    "N/A"
+#define VER_FILE_DESCRIPTION_STR    "Pinger"
 #define VER_FILE_VERSION            VERSION_MAJOR, VERSION_MINOR, VERSION_REVISION
 #define VER_FILE_VERSION_STR        STRINGIZE(VERSION_MAJOR)        \
                                     "." STRINGIZE(VERSION_MINOR)    \

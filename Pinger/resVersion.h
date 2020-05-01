@@ -2,10 +2,6 @@
 // Microsoft Visual C++ generated include file.
 // Used by Pinger.rc
 //
-#define VERSION_REVISION                0
-#define VER_VER_DEBUG                   0
-#define VERSION_MAJOR                   1
-#define VERSION_MINOR                   1
 
 // Next default values for new objects
 // 
