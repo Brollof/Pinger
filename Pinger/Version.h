@@ -4,7 +4,7 @@
 #define STRINGIZE(s) STRINGIZE2(s)
 
 #define VERSION_MAJOR               1
-#define VERSION_MINOR               2
+#define VERSION_MINOR               3
 #define VERSION_REVISION            0
 
 #define VER_FILE_DESCRIPTION_STR    "Pinger"
