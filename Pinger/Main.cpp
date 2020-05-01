@@ -113,12 +113,15 @@ bool Main::ValidateInput(int val, int min, int max)
 
 void Main::StartStopButtonClicked(wxCommandEvent& event)
 {
+  static const char* msgTemplate = "Samples number must be in range [%d; %d]\n"
+    "Period must be in range [%d; %d]";
+
   event.Skip();
 
   if (m_timer.IsRunning())
   {
     m_timer.Stop();
-    m_btnStartStop->SetLabel("Ping!");
+    m_btnStartStop->SetLabel(APP_RUN_BTN_TEXT);
     m_taskBarIcon->SetActive(false);
     m_txtTarget->Enable(true);
     m_txtSamples->Enable(true);
@@ -133,8 +136,7 @@ void Main::StartStopButtonClicked(wxCommandEvent& event)
     if (!ValidateInput(samples, SAMPLES_MIN, SAMPLES_MAX) || !ValidateInput(period, PERIOD_MIN, PERIOD_MAX))
     {
       wxString msg;
-      msg.Printf(wxT("Samples number must be in range [%d; %d]\n"
-        "Period must be in range [%d; %d]"),
+      msg.Printf(msgTemplate,
         SAMPLES_MIN, SAMPLES_MAX, PERIOD_MIN, PERIOD_MAX);
       wxMessageBox(msg, "Invalid input", wxOK | wxICON_EXCLAMATION | wxCENTRE);
       return;
@@ -145,7 +147,7 @@ void Main::StartStopButtonClicked(wxCommandEvent& event)
 
     InitStats(samples);
     m_timer.Start(period);
-    m_btnStartStop->SetLabel("Stop");
+    m_btnStartStop->SetLabel(APP_STOP_BTN_TEXT);
     m_taskBarIcon->SetActive(true);
     m_txtTarget->Enable(false);
     m_txtSamples->Enable(false);
