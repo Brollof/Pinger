@@ -1,7 +1,12 @@
-#include <winsock.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include <iostream>
 #include <sstream>
 #include "Ping.h"
+
+#pragma comment (lib, "Ws2_32.lib")
+
+#define PING_TIMEOUT 1000 // ms
 
 typedef struct
 {
@@ -22,7 +27,6 @@ typedef struct
   void* Data;                                // Pointer to the echo data
   IP_OPTION_INFORMATION Options;             // Reply options
 } IP_ECHO_REPLY, * PIP_ECHO_REPLY;
-
 
 PingResult_t ping(std::string target)
 {
@@ -47,14 +51,17 @@ PingResult_t ping(std::string target)
   if (hIcmp == 0)
   {
     std::cout << "Unable to locate ICMP.DLL!" << std::endl;
+    WSACleanup();
     return result;
   }
 
   // Look up an IP address for the given host name
-  struct hostent* phe = gethostbyname(target.c_str());
-  if (!phe)
+  struct addrinfo* addrResult = nullptr;
+  int error = getaddrinfo(target.c_str(), nullptr, nullptr, &addrResult);
+  if (error != 0)
   {
-    std::cout << "Could not find IP address for: " << target << std::endl;
+    std::cout << "Could not find IP address for: " << target << ", error: " << error << std::endl;
+    WSACleanup();
     return result;
   }
 
@@ -72,6 +79,8 @@ PingResult_t ping(std::string target)
   if ((pIcmpCreateFile == 0) || (pIcmpCloseHandle == 0) || (pIcmpSendEcho == 0))
   {
     std::cout << "Failed to get proc addr for function." << std::endl;
+    WSACleanup();
+    freeaddrinfo(addrResult);
     return result;
   }
 
@@ -80,6 +89,8 @@ PingResult_t ping(std::string target)
   if (hIP == INVALID_HANDLE_VALUE)
   {
     std::cout << "Unable to open ping service." << std::endl;
+    WSACleanup();
+    freeaddrinfo(addrResult);
     return result;
   }
 
@@ -90,16 +101,18 @@ PingResult_t ping(std::string target)
   if (pIpe == 0)
   {
     std::cout << "Failed to allocate global ping packet buffer." << std::endl;
+    WSACleanup();
+    freeaddrinfo(addrResult);
     return result;
   }
   pIpe->Data = acPingBuffer;
   pIpe->DataSize = sizeof(acPingBuffer);
 
   // Send the ping packet
-
-  DWORD dwStatus = pIcmpSendEcho(hIP, *((DWORD*)phe->h_addr_list[0]),
+  struct sockaddr_in* sockaddr_ipv4 = (struct sockaddr_in*)addrResult->ai_addr;
+  DWORD dwStatus = pIcmpSendEcho(hIP, sockaddr_ipv4->sin_addr.S_un.S_addr,
     acPingBuffer, sizeof(acPingBuffer), NULL, pIpe,
-    sizeof(IP_ECHO_REPLY) + sizeof(acPingBuffer), 1000);
+    sizeof(IP_ECHO_REPLY) + sizeof(acPingBuffer), PING_TIMEOUT);
 
   std::stringstream ss;
   if (dwStatus != 0)
@@ -117,6 +130,8 @@ PingResult_t ping(std::string target)
   {
     ss << "Timeout." << std::endl;
     std::cout << ss.rdbuf();
+    WSACleanup();
+    freeaddrinfo(addrResult);
     return result;
   }
   result.data = ss.str();
@@ -127,6 +142,7 @@ PingResult_t ping(std::string target)
   GlobalFree(pIpe);
   FreeLibrary(hIcmp);
   WSACleanup();
+  freeaddrinfo(addrResult);
 
   return result;
 }
