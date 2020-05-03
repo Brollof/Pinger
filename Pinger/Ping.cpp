@@ -6,7 +6,8 @@
 
 #pragma comment (lib, "Ws2_32.lib")
 
-#define PING_TIMEOUT 1000 // ms
+#define ICMP_DLL_NAME     L"icmp.dll"
+#define PING_TIMEOUT      1000 // ms
 
 typedef struct
 {
@@ -40,14 +41,8 @@ PingResult_t ping(std::string target)
     std::cout << "WSAStartup failed!" << std::endl;
     return result;
   }
-  const char* dll = "icmp.dll";
-  size_t size = strlen(dll) + 1;
-  wchar_t* dllName = new wchar_t[size];
 
-  size_t outSize;
-  mbstowcs_s(&outSize, dllName, size, dll, size - 1);
-
-  HINSTANCE hIcmp = LoadLibrary((LPWSTR)dllName);
+  HINSTANCE hIcmp = LoadLibrary(ICMP_DLL_NAME);
   if (hIcmp == 0)
   {
     std::cout << "Unable to locate ICMP.DLL!" << std::endl;
