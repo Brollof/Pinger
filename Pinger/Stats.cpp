@@ -36,7 +36,7 @@ float Stats::GetAverage()
     sum += m_data->at(i);
   }
 
-  return sum / size;
+  return size ? sum / size : 0;
 }
 
 #ifdef _DEBUG
