@@ -5,7 +5,7 @@
 
 #define VERSION_MAJOR               1
 #define VERSION_MINOR               3
-#define VERSION_REVISION            0
+#define VERSION_REVISION            1
 
 #define VER_FILE_DESCRIPTION_STR    "Pinger"
 #define VER_FILE_VERSION            VERSION_MAJOR, VERSION_MINOR, VERSION_REVISION
