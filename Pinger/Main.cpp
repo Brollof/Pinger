@@ -70,12 +70,16 @@ Main::Main(std::string appName) : wxFrame(nullptr, wxID_ANY, appName)
   m_checkBox = new wxCheckBox(this, ID_CB_FILE, "Save ping data to file");
   boxBottom1->Add(m_checkBox, 0, wxALL, BORDER_WIDTH);
 
+  wxBoxSizer* h1 = new wxBoxSizer(wxHORIZONTAL);
+  wxBoxSizer* h2 = new wxBoxSizer(wxHORIZONTAL);
   m_labPacketLoss = new wxStaticText(this, wxID_ANY, FORMAT_PLOSS(0));
   m_labPing = new wxStaticText(this, wxID_ANY, FORMAT_PING(0));
-  boxBottom2->Add(new wxStaticText(this, wxID_ANY, "Packet loss:"), 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
-  boxBottom2->Add(m_labPacketLoss, 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
-  boxBottom2->Add(new wxStaticText(this, wxID_ANY, "Ping:"), 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
-  boxBottom2->Add(m_labPing, 0, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
+  h1->Add(new wxStaticText(this, wxID_ANY, "Packet loss:"), 1, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
+  h1->Add(m_labPacketLoss, 1, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
+  h2->Add(new wxStaticText(this, wxID_ANY, "Ping:"), 1, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
+  h2->Add(m_labPing, 1, wxALL | wxALIGN_CENTER_VERTICAL, BORDER_WIDTH);
+  boxBottom2->Add(h1);
+  boxBottom2->Add(h2);
 
   SetSizerAndFit(boxMain);
 
